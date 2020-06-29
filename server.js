@@ -14,7 +14,7 @@ async function startKafka(){
     
     const kafka = new Kafka({
         clientId: uuidv4(),
-        brokers:['localhost:9092']
+        brokers:['kafka:9092']
     });
 
     const consumer = kafka.consumer({groupId: 'test-group'});
