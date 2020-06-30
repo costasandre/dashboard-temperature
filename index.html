@@ -15,12 +15,19 @@
                     load: function () {
                         var currentSerie = this.series[0];
                         var averageSerie = this.series[1];
-                        socket.on('message', function(data){
+                        socket.on('sensor-temperature', function(data){
                             console.log("Chegou", data);
                             data = JSON.parse(data);
                             if (data) {
-                                currentSerie.addPoint([data.timestamp, data.temperature], true, true);
-                                averageSerie.addPoint([data.timestamp, data.temperature], true, true);
+                                currentSerie.addPoint([new Date().getTime(), data.temperature], true, true);
+                            }
+                        });
+
+                        socket.on('temperature-average', function(data){
+                            console.log("Chegou", data);
+                            data = JSON.parse(data);
+                            if (data) {
+                                averageSerie.addPoint([new Date().getTime(), data], true, true);
                             }
                         });
                     }
@@ -89,7 +96,7 @@
 
             series: [
             {
-                type: 'areaspline',
+                type: 'area',
                 name: 'Current Temperature',
                 threshold: null,
                 fillColor: {
@@ -120,7 +127,7 @@
                 }())
             },
             {
-                type: 'spline',
+                type: 'line',
                 name: 'Average Temperature',
                 data: (function () {
                     // generate an array of random data

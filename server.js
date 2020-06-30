@@ -5,9 +5,14 @@ const { Kafka } = require('kafkajs');
 const { v4: uuidv4} = require('uuid');
 const port = 3001;
 
-function processMessage(message){
+function processMessage(message, topic){
     console.log(`Consumer: ${message.value}`);
-    io.emit("message", message.value.toString());
+    console.log(`Topic: ${topic}`);
+    if(String(topic) === 'sensor.temperature'){
+        io.emit("sensor-temperature", message.value.toString());
+    }else{
+        io.emit("temperature-average", message.value.toString());
+    }
 }
 
 async function startKafka(){
@@ -22,13 +27,15 @@ async function startKafka(){
     await consumer.connect();
     
     await consumer.subscribe({topic: 'sensor.temperature', fromBeginning: false});
+
+    await consumer.subscribe({topic: 'sensor.test_2', fromBeginning: false});
     
     await consumer.run({
         eachBatchAutoResolve: false,
         eachBatch: async ({ batch, resolveOffset, heartbeat, isRunning, isStale }) => {
             for (let message of batch.messages) {
                 if (!isRunning() || isStale()) break
-                await processMessage(message)
+                await processMessage(message, batch.topic)
                 resolveOffset(message.offset)
                 await heartbeat()
             }
