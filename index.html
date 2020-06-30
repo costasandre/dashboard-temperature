@@ -10,6 +10,7 @@
         var series;
         Highcharts.stockChart('container', {
             chart: {
+                animation: false,
                 events: {
                     load: function () {
                         var currentSerie = this.series[0];
@@ -18,8 +19,8 @@
                             console.log("Chegou", data);
                             data = JSON.parse(data);
                             if (data) {
-                                currentSerie.addPoint([(new Date(data.timestamp)).getTime(), data.temperature], true, true);
-                                averageSerie.addPoint([(new Date(data.timestamp)).getTime(), data.temperature], true, true);
+                                currentSerie.addPoint([data.timestamp, data.temperature], true, true);
+                                averageSerie.addPoint([data.timestamp, data.temperature], true, true);
                             }
                         });
                     }
@@ -37,50 +38,46 @@
                 useUTC: false
             },
 
-            // rangeSelector: {
-            //     buttons: [{
-            //         count: 30,
-            //         type: 'second',
-            //         text: '30S'
-            //     }, 
-            //     {
-            //         count: 1,
-            //         type: 'minute',
-            //         text: '1M'
-            //     },
-            //     {
-            //         count: 5,
-            //         type: 'minute',
-            //         text: '5M'
-            //     },
-            //     {
-            //         count: 10,
-            //         type: 'minute',
-            //         text: '10M'
-            //     },
-            //     {
-            //         count: 30,
-            //         type: 'minute',
-            //         text: '30M'
-            //     },
-            //     {
-            //         type: 'hour',
-            //         count: 1,
-            //         text: '1h'
-            //     }, 
-            //     {
-            //         type: 'day',
-            //         count: 1,
-            //         text: '1D'
-            //     }, 
-            //     {
-            //         type: 'all',
-            //         count: 1,
-            //         text: 'All'
-            //     }],
-            //     inputEnabled: false,
-            //     selected: 0
-            // },
+            rangeSelector: {
+                buttons: [ 
+                {
+                    count: 1,
+                    type: 'minute',
+                    text: '1M'
+                },
+                {
+                    count: 5,
+                    type: 'minute',
+                    text: '5M'
+                },
+                {
+                    count: 10,
+                    type: 'minute',
+                    text: '10M'
+                },
+                {
+                    count: 30,
+                    type: 'minute',
+                    text: '30M'
+                },
+                {
+                    type: 'hour',
+                    count: 1,
+                    text: '1H'
+                }, 
+                {
+                    type: 'day',
+                    count: 1,
+                    text: '1D'
+                }, 
+                {
+                    type: 'all',
+                    count: 1,
+                    text: 'All'
+                }],
+                inputEnabled: false,
+                selected: 0
+            },
 
             title: {
                 text: 'Live Temperature'
@@ -93,7 +90,7 @@
             series: [
             {
                 type: 'areaspline',
-                name: 'Average Temperature',
+                name: 'Current Temperature',
                 threshold: null,
                 fillColor: {
                     linearGradient: {
@@ -116,7 +113,7 @@
                     for (i = -999; i <= 0; i += 1) {
                         data.push([
                             time + i * 1000,
-                            Math.round(Math.random() * 40)
+                            0
                         ]);
                     }
                     return data;
@@ -124,7 +121,7 @@
             },
             {
                 type: 'spline',
-                name: 'Current Temperature',
+                name: 'Average Temperature',
                 data: (function () {
                     // generate an array of random data
                     var data = [],
@@ -134,7 +131,7 @@
                     for (i = -999; i <= 0; i += 1) {
                         data.push([
                             time + i * 1000,
-                            Math.round(Math.random() * 40)
+                            0
                         ]);
                     }
                     return data;
